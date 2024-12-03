@@ -20,21 +20,18 @@ pub mod escrow {
     }
 
     pub fn make_offer(
-        ctx: Context<MakeOffer>,
+        context: Context<MakeOffer>,
         id: u64,
-        token_mint_amount_a: u64,
-        token_mint_amount_b: u64,
-    ) -> Result<()> {
-        make_offer::process(ctx, id, token_mint_amount_a, token_mint_amount_b)?;
-        // make_offer::send_user_tokens_to_vault(&ctx, token_mint_amount_a)?;
-        // make_offer::store_offer_params(ctx, id, token_mint_amount_b);
+        token_a_offered_amount: u64,
+        token_b_wanted_amount: u64,
+        ) -> Result<()> {
+        instructions::make_offer::send_offered_tokens_to_vault(&context,
+        token_a_offered_amount)?;
+        instructions::make_offer::save_offer(context, id, token_b_wanted_amount)
+        }
 
-        Ok(())
-    }
     pub fn take_offer(context: Context<TakeOffer>) -> Result<()> {
-        take_offer::withdraw_and_close_vault(&context)?;
-        take_offer::send_wanted_tokens_to_maker(context)?;
-        
-        Ok(())
+        instructions::take_offer::send_wanted_tokens_to_maker(&context)?;
+        instructions::take_offer::withdraw_and_close_vault(context)
     }
 }
